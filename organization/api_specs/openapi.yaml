@@ -1,0 +1,54 @@
+openapi: 3.0.3
+info:
+  title: Organization API
+  version: 1.0.0
+
+paths:
+  /organizations/:
+    post:
+      operationId: create_organization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - domain
+                - timezone
+              properties:
+                name:
+                  type: string
+                domain:
+                  type: string
+                timezone:
+                  type: string
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  name:
+                    type: string
+                  domain:
+                    type: string
+                  timezone:
+                    type: string
+                  is_active:
+                    type: boolean
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
