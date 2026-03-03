@@ -1,0 +1,122 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Employees API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/employees/": {
+      "post": {
+        "operationId": "create_employee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "user_id",
+                  "organization_id",
+                  "employee_code",
+                  "employment_type",
+                  "joining_date"
+                ],
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "organization_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "employee_code": {
+                    "type": "string",
+                    "maxLength": 50
+                  },
+                  "department_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "nullable": true
+                  },
+                  "designation_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "nullable": true
+                  },
+                  "employment_type": {
+                    "type": "string",
+                    "enum": ["FULL_TIME", "PART_TIME", "INTERN"]
+                  },
+                  "joining_date": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Employee created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "employee_code": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["ACTIVE", "INACTIVE", "TERMINATED"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found (organization or user)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Duplicate (employee code already exists in organization)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

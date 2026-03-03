@@ -1,1 +1,2 @@
-from .employees_model import *
+from .employees_model import EmployeeProfile
+from .employment_history_model import EmploymentHistory

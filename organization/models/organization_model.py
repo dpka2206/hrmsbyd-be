@@ -14,3 +14,33 @@ class Organization(BaseModel):
 
     def __str__(self):
         return self.name
+
+
+class Department(BaseModel):
+    organization = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, related_name="departments"
+    )
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ["name"]
+        db_table = "organization_department"
+        unique_together = [["organization", "name"]]
+
+    def __str__(self):
+        return self.name
+
+
+class Designation(BaseModel):
+    organization = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, related_name="designations"
+    )
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ["name"]
+        db_table = "organization_designation"
+        unique_together = [["organization", "name"]]
+
+    def __str__(self):
+        return self.name

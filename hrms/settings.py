@@ -45,12 +45,8 @@ INSTALLED_APPS = [
     'accounts',
     'organization',
     'employees',
-    'attendance',
-    'leave',
-    'tasks',
-    'tickets',
+    'workforce',
     'payroll',
-    'notifications',
     'ai',
 ]
 

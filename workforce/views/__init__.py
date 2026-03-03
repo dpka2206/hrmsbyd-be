@@ -1,0 +1,1 @@
+# Workforce views (clean architecture).

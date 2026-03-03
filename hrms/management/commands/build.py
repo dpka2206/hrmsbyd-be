@@ -1,3 +1,4 @@
+import json
 import shutil
 import yaml
 from pathlib import Path
@@ -7,14 +8,28 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 
+def _load_spec(spec_path: Path):
+    """Load OpenAPI spec from YAML or JSON file."""
+    with open(spec_path, encoding="utf-8") as f:
+        if spec_path.suffix in (".yaml", ".yml"):
+            return yaml.safe_load(f)
+        return json.load(f)
+
+
 def collect_operations():
-    """Scan installed apps for api_specs/openapi.yaml and yield (app_name, path, method, operation_id)."""
+    """Scan installed apps for api_specs/openapi.yaml or api_spec.json; yield (app_name, path, method, operation_id)."""
+    spec_names = ("openapi.yaml", "openapi.yml", "api_spec.json")
     for app_config in apps.get_app_configs():
-        openapi_path = Path(app_config.path) / "api_specs" / "openapi.yaml"
-        if not openapi_path.is_file():
+        api_specs_dir = Path(app_config.path) / "api_specs"
+        spec_path = None
+        for name in spec_names:
+            candidate = api_specs_dir / name
+            if candidate.is_file():
+                spec_path = candidate
+                break
+        if spec_path is None:
             continue
-        with open(openapi_path) as f:
-            spec = yaml.safe_load(f)
+        spec = _load_spec(spec_path)
         paths = spec.get("paths") or {}
         for path_pattern, path_item in paths.items():
             if not isinstance(path_item, dict):
@@ -66,7 +81,7 @@ urlpatterns = [
 
 
 class Command(BaseCommand):
-    help = "Scan api_specs/openapi.yaml in apps, generate build/views and build/urls.py."
+    help = "Scan api_specs/openapi.yaml or api_spec.json in apps, generate build/views and build/urls.py."
 
     def handle(self, *args, **options):
         build_dir = Path(settings.BASE_DIR) / "build"
